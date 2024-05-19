@@ -1,0 +1,1127 @@
+Public Sub Run_Main_Code()
+
+Call Clearing_Old_Data
+
+Dim Aircraft_Model, Propalsion_Type As String
+
+Dim YNAnswer, Flight_Time, Output, x, y, z As Integer
+
+YNAnswer = MsgBox("Are You Ready to input field data?", vbYesNo, "Welcome to Aerodynamic Annalysis Tool By 'ADAMS LAB'")
+
+If YNAnswer = vbYes Then
+    Call Model_FieldData_Input
+    Call All_Function
+Else
+    Output = MsgBox("You Can Try Later!", vbOKOnly, "ADAMS LAB")
+    
+    
+End If
+
+End Sub
+
+Public Sub Model_FieldData_Input()
+
+Dim msgValue
+Dim Aircraft_Model, Propalsion_Type As Integer
+Dim YNAnswer, Output, x, y, z As Integer
+Dim Flight_Time As Double
+
+Aircraft_Model = InputBox("What is the aircraft Model? Choos:" _
+& vbCr & "1-Boeing 737 Max-800" _
+& vbCr & "2-Boeing 737 Max-900" _
+& vbCr & "3-Boeing 747 1000" _
+& vbCr & "4-Boeing 787 1000" _
+& vbCr & "5-Boeing 777 1000" _
+& vbCr & "6-Boeing 777 X" _
+, "Aircraft Model Name", 1)
+
+Range("E2").Value = Aircraft_Model
+
+
+Select Case Aircraft_Model
+Case 1
+    Range("D2").Value = "Boeing 737 Max-800"
+Case 2
+    Range("D2").Value = "Boeing 737 Max-900"
+Case 3
+    Range("D2").Value = "Boeing 747 1000"
+Case 4
+    Range("D2").Value = "Boeing 787 1000"
+Case 5
+    Range("D2").Value = "Boeing 777 1000"
+Case 6
+    Range("D2").Value = "Boeing 777 X"
+
+Case Else
+    YNAnswer = MsgBox("You didn't type a number between 1 to 6. Do you want to try again ?", vbYesNo)
+    If YNAnswer = vbYes Then
+        Call Model_FieldData_Input
+    End If
+End Select
+
+
+
+Propalsion_Type = InputBox("What is the propalsion type? Choos:" _
+& vbCr & "1-ICE" _
+& vbCr & "2-Hybride" _
+& vbCr & "3-All Electric" _
+, "Aircraft Propalsion Type", 1)
+
+Range("E3").Value = Propalsion_Type
+
+
+Select Case Aircraft_Model
+Case 1
+    Range("D3").Value = "ICE"
+Case 2
+    Range("D3").Value = "Hybride"
+Case 3
+    Range("D3").Value = "All Electric"
+
+Case Else
+    YNAnswer = MsgBox("You didn't type a number between 1 to 3. Do you want to try again ?", vbYesNo)
+    If YNAnswer = vbYes Then
+        Call Model_FieldData_Input
+    End If
+End Select
+
+
+
+Flight_Time = InputBox("What is total flight duration in minutes? Choos:" _
+, "Duration of flight", 300)
+
+Range("D59").Value = Flight_Time
+
+
+
+End Sub
+
+
+
+Public Sub All_Function()
+
+Call Time_Min
+Call Time_Sec
+Call Altitude_ft ' need to check showing false
+Call Altitude_m
+Call Altitute_Km
+Call Air_Pressure
+Call Temperature
+Call Density
+Call Speed_Aircraft_mps     ' Aircraft speed must be calculated befor Horizontal Distance
+Call Horizontal_Distance_Travel     ' Must be calculated after the aircraft speed '??? ** eita vul ache calculate again
+Call Hor_Distance_Tra_KM
+Call Sound_Speed_c
+Call Speed_Aircraft_Kmph
+Call Speed_Aircraft_Mph
+Call Hori_Accelaration
+Call Actual_Air_Speed_mps
+Call Mach_No
+Call Renolds_Nu_C_min
+Call Renolds_Nu_C_max
+Call AOA
+Call Pitch_Angle
+Call Pay_Load
+Call Plane_Oper_Empt_Weight_Kg
+Call Etc_Mass
+Call Existing_Fuel_Mass_Kg
+Call Reserve_Fuel_Mass_Kg
+Call Aircraft_Overall_Mass_Kg
+Call Gravity_Accelaration
+Call Overall_Weight_N
+Call Overall_Mass_lb
+Call Flight_Status
+Call Thrust_Lever_Position
+Call Thrust_If_Sea_Level
+Call Derated_Factor
+Call Thrust_Available
+Call Thrust_Applied
+Call Power_Generated_MW
+Call Force_Req_X_Axis
+Call Force_Req_Z_Axis
+Call Thrust_Vector_Correction
+Call Flap_Position
+Call Climb_Descend_Angle
+Call Drag_D_N
+Call Lift_L_N
+Call Aerodynamic_Efficiency
+Call Dynamic_Pressure_Pa
+Call CD
+Call CL
+
+
+' Calling those function to creat the column
+'Time_Min
+'Time_Sec
+'Altitude_ft()
+'Altitude_m()
+'Air_Pressure
+
+End Sub
+
+Public Sub Clearing_Old_Data()
+
+''
+''Range("A85:AV500").Select
+''Selection.Delete
+''Cells(85, 1).Select
+''
+''Range("A85:AV500").Select
+''Selection.Delete
+''Cells(85, 1).Select
+
+Range("A85:AV500").Select
+Selection.Value = ""
+Cells(85, 1).Select
+
+'Range("A85:AV500").Select
+'Selection.Delete
+'Cells(85, 1).Select
+
+
+End Sub
+Public Sub Time_Min()
+
+'Time in Minutes column in B84
+
+
+Dim t As Integer
+
+For t = 0 To Cells(59, 4).Value
+
+Cells(t + 85, 2).Value = t
+Next t
+
+End Sub
+
+Public Sub Time_Sec()
+
+' Time in sec Column in A84
+
+
+Dim t As Integer
+
+For t = 0 To Cells(59, 4).Value
+
+Cells(t + 85, 1).Value = t * 60
+Next t
+
+
+
+End Sub
+
+Public Sub Altitude_ft()
+
+'For cruise 30 mins
+Dim x As Integer
+
+For x = 0 To Cells(8, 4).Value
+
+Cells(x + 85, 3).Value = Cells(x + 85, 2).Value * Cells(10, 4).Value / Cells(8, 4).Value
+Next x
+
+
+
+'For Cruise
+Dim y As Integer
+
+For y = (Cells(8, 4).Value + 1) To (Cells(59, 4).Value - Cells(21, 4).Value)
+
+Cells(y + 85, 3).Value = Cells(10, 4).Value
+
+Next y
+
+
+
+'For Descending
+
+Dim z As Integer
+
+For z = (Cells(59, 4).Value - Cells(21, 4).Value + 1) To Cells(59, 4).Value
+
+Cells(z + 85, 3).Value = Cells(10, 4).Value - (Cells(z + 85, 2).Value - Cells(8, 4).Value - Cells(14, 4).Value) * (Cells(10, 4).Value - 0) / Cells(21, 4).Value
+
+'$D$10-(B364-$D$8-$D$14)*($D$10-0)/$D$21
+
+Next z
+
+
+End Sub
+
+
+Public Sub Altitude_m()
+
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 4).Value = Cells(x + 85, 3).Value * 0.305 ' ft to m conversion factor
+Next x
+
+
+End Sub
+
+Public Sub Altitute_Km()
+
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 5).Value = Cells(x + 85, 3).Value * 0.305 / 1000 ' ft to m conversion factor
+Next x
+
+End Sub
+
+Public Sub Air_Pressure()
+
+'Air pressure in (Pa)
+
+
+Dim x As Integer
+
+
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 6).Value = Cells(64, 4).Value * Exp(-0.118 * Cells(x + 85, 5).Value - (0.0015 * Cells(x + 85, 5).Value ^ (2)) / (1 - 0.018 * Cells(x + 85, 5).Value + 0.0011 * Cells(x + 85, 5).Value ^ 2))
+
+' Warning: 5^2=5 2, but 5 ^2= 25. Space must be there befoe the ^ sign
+
+
+'=$D$64*EXP(-0.118*E85 -(0.0015*E85*E85)/(1-0.018*E85+0.0011*E85*E85))
+
+Next x
+
+
+End Sub
+
+
+
+Public Sub Temperature()
+
+' Method One
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 7).Value = 216.65 + 2 * Log(1 + Exp(35.75 - 3.25 * Cells(x + 85, 5).Value) + Exp(-3 + 0.0003 * Cells(x + 85, 5).Value ^ 3))
+
+Next x
+
+''''''Warning: 5^2=5 2, but 5 ^2= 25. Space must be there befoe the ^ sign
+''''''
+''''''
+''''''=216.65+2*LN(1+EXP(35.75-3.25*E108)+EXP(-3+0.0003*E108*E108*E108))=226.62 K
+
+
+End Sub
+
+
+Public Sub Density()
+
+
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 8).Value = Cells(85 + x, 6).Value / Cells(65, 4).Value / Cells(85 + x, 7).Value
+
+
+Next x
+
+'''Test case'=F85/$D$65/G85=1.225
+
+
+
+End Sub
+
+' ***Calculate it again
+
+Public Sub Horizontal_Distance_Travel()
+
+'For cruise 30 mins
+Dim x As Integer
+
+For x = 0 To Cells(8, 4).Value
+
+Cells(x + 85, 9).Value = 0.5 * Cells(79, 4) * Cells(x + 85, 1) ^ 2
+
+Next x
+
+
+
+'''For Cruise
+Dim y As Integer
+
+For y = (Cells(8, 4).Value + 1) To (Cells(59, 4).Value - Cells(21, 4).Value)
+
+Cells(y + 85, 9).Value = Cells((Cells(8, 4).Value + 85), 9).Value + Cells(85 + Cells(8, 4).Value, 13) * (Cells(y + 85, 2).Value - Cells(8, 4).Value) * 60 'min = 60s
+
+
+'''''' Cells((Cells(8, 4).Value + 85), 9).Value = distance travel in Ascending order
+'''''' * Cells(85 + Cells(8, 4).Value, 13) this is cruising speed that is why we will fast calculat the Ground speed of plane ( M column first ). so that we can use that
+'''''' * in main function we will call the Ground speed fundtion befor the Horizontal_Distance_Travel function
+
+
+Next y
+
+
+
+'''For Descending
+
+Dim z As Integer
+
+For z = (Cells(59, 4).Value - Cells(21, 4).Value + 1) To Cells(59, 4).Value
+
+Cells(z + 85, 9).Value = Cells(z + 85 - 1, 9) + (Cells(z + 85 - 1, 13) * 60 + 0.5 * Range("D80") * 60 ^ 2)
+
+' column M or 13 er Aircraft velocity use korchi tai Velocity function hav eto call first then the
+
+'Cells((Cells(59, 4).Value - Cells(21, 4).Value) + 85, 9).Value + 0.5 * (-Range("D80")) * (Cells(z + 85, 2).Value ^ 2 - (Cells(59, 4).Value - Cells(21, 4).Value) ^ 2) * 60 ^ 2
+' We have to develop the formula befor that
+
+'Cells((Cells(59, 4).Value - Cells(21, 4).Value) + 85, 9).Value = Distance Travel end of the Cruise Condition
+' +
+
+Next z
+
+
+
+End Sub
+
+Public Sub Hor_Distance_Tra_KM()
+
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 10).Value = Cells(x + 85, 9).Value / 1000 ' m to km conversion factor
+
+Next x
+
+End Sub
+
+Public Sub Sound_Speed_c()
+
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 11).Value = Sqr(Range("D66").Value * Range("D65").Value * Cells(x + 85, 7).Value)
+
+Next x
+
+
+
+
+
+End Sub
+
+
+
+Public Sub Speed_Aircraft_mps()
+
+
+'For cruise 30 mins
+Dim x As Integer
+
+For x = 0 To Cells(8, 4).Value
+
+Cells(x + 85, 13).Value = Range("D15").Value * Cells(x + 85, 2).Value / Range("D8").Value
+
+Next x
+
+
+'''For Cruise
+Dim y As Integer
+
+For y = (Cells(8, 4).Value + 1) To (Cells(59, 4).Value - Cells(21, 4).Value)
+
+Cells(y + 85, 13).Value = Cells((Cells(8, 4).Value + 85), 13)
+
+
+Next y
+
+
+'''For Descending
+
+Dim z As Integer
+
+For z = ((Cells(59, 4).Value - Cells(21, 4).Value) + 1) To Cells(59, 4).Value
+
+Cells(z + 85, 13).Value = Cells((Cells(59, 4).Value - Cells(21, 4).Value + 85), 13).Value - Range("D15").Value * (Cells(z + 85, 2).Value - (Cells(59, 4).Value - Cells(21, 4).Value)) / Range("D21").Value
+
+Next z
+
+
+
+End Sub
+
+
+Public Sub Speed_Aircraft_Kmph()
+
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 14).Value = Cells(x + 85, 13).Value * 3.6 ' m/s to km/h conversion factor
+Next x
+
+
+
+End Sub
+
+
+Public Sub Speed_Aircraft_Mph()
+
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 15).Value = Cells(x + 85, 13).Value * 2.237 ' m/s to mile/h conversion factor
+Next x
+
+
+End Sub
+
+Public Sub Hori_Accelaration()
+
+'For ascending 30 mins
+Dim x As Integer
+
+For x = 0 To Cells(8, 4).Value
+
+Cells(x + 85, 16).Value = 2 * Range("D11").Value / (Range("D8").Value * 60) ^ 2 's=ut+1/2*at2
+
+Next x
+
+
+
+'''For Cruise
+Dim y As Integer
+
+For y = (Cells(8, 4).Value + 1) To (Cells(59, 4).Value - Cells(21, 4).Value)
+
+Cells(y + 85, 16).Value = 0
+
+
+Next y
+
+
+
+'''For Descending
+
+Dim z As Integer
+
+For z = (Cells(59, 4).Value - Cells(21, 4).Value + 1) To Cells(59, 4).Value
+
+Cells(z + 85, 16).Value = (0 - Range("D15").Value) / (Range("D21").Value * 60)
+
+
+Next z
+
+
+End Sub
+
+
+Public Sub Actual_Air_Speed_mps()
+
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 17).Value = Cells(x + 85, 13).Value - Range("D69").Value
+
+Next x
+
+
+End Sub
+
+Public Sub Mach_No()
+
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 18).Value = Cells(x + 85, 17).Value / Cells(x + 85, 11).Value
+
+Next x
+
+End Sub
+
+
+Public Sub Renolds_Nu_C_min()
+
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 19).Value = Cells(x + 85, 8).Value * Cells(x + 85, 17).Value * Range("D45").Value / Range("D62").Value
+
+Next x
+
+
+End Sub
+
+Public Sub Renolds_Nu_C_max()
+
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 20).Value = Cells(x + 85, 8).Value * Cells(x + 85, 17).Value * Range("D46").Value / Range("D62").Value
+
+Next x
+
+
+End Sub
+
+
+
+Public Sub AOA()
+
+'For ascending 30 mins
+Dim x As Integer
+
+For x = 0 To Cells(8, 4).Value
+
+Cells(x + 85, 21).Value = "Unknown"
+
+Next x
+
+
+
+'''For Cruise
+Dim y As Integer
+
+For y = (Cells(8, 4).Value + 1) To (Cells(59, 4).Value - Cells(21, 4).Value)
+
+Cells(y + 85, 21).Value = 0
+
+
+Next y
+
+
+
+'''For Descending
+
+Dim z As Integer
+
+For z = (Cells(59, 4).Value - Cells(21, 4).Value + 1) To Cells(59, 4).Value
+
+Cells(z + 85, 21).Value = "unknow"
+
+
+Next z
+
+
+End Sub
+
+Public Sub Pitch_Angle()
+
+'For ascending 30 mins
+Dim x As Integer
+
+For x = 0 To Cells(8, 4).Value
+
+Cells(x + 85, 22).Value = "Unknown"
+
+Next x
+
+
+
+'''For Cruise
+Dim y As Integer
+
+For y = (Cells(8, 4).Value + 1) To (Cells(59, 4).Value - Cells(21, 4).Value)
+
+Cells(y + 85, 22).Value = 0
+
+
+Next y
+
+
+
+'''For Descending
+
+Dim z As Integer
+
+For z = (Cells(59, 4).Value - Cells(21, 4).Value + 1) To Cells(59, 4).Value
+
+Cells(z + 85, 22).Value = "unknow"
+
+
+Next z
+
+
+
+End Sub
+
+
+Public Sub Pay_Load()
+
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 23).Value = Range("D46").Value
+
+Next x
+
+End Sub
+
+Public Sub Plane_Oper_Empt_Weight_Kg()
+
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 24).Value = Range("D47").Value
+
+Next x
+
+End Sub
+
+
+Public Sub Etc_Mass()
+
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 25).Value = Range("D48").Value
+
+Next x
+
+End Sub
+
+
+Public Sub Existing_Fuel_Mass_Kg()
+
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 26).Value = Range("D49").Value - Range("D78").Value * Cells(x + 85, 2).Value
+
+Next x
+
+End Sub
+Public Sub Reserve_Fuel_Mass_Kg()
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 27).Value = Range("D53").Value
+
+Next x
+
+End Sub
+
+Public Sub Aircraft_Overall_Mass_Kg()
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 28).Value = Cells(x + 85, 23).Value + Cells(x + 85, 24).Value + Cells(x + 85, 25).Value + Cells(x + 85, 26).Value + Cells(x + 85, 27).Value
+
+'???? Resear Fuel Should Add here'
+
+Next x
+
+End Sub
+
+
+
+Public Sub Gravity_Accelaration()
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 29).Value = 9.81 / ((1 + Cells(x + 85, 4).Value / 6400000) ^ 2)
+
+
+Next x
+
+End Sub
+
+
+Public Sub Overall_Weight_N()
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 30).Value = Cells(x + 85, 28).Value * Cells(x + 85, 29).Value
+
+Next x
+
+End Sub
+Public Sub Overall_Mass_lb()
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 31).Value = Cells(x + 85, 28).Value * 2.205 'kg to lb conversion factor
+
+Next x
+
+End Sub
+
+
+Public Sub Flight_Status()
+
+'For ascending 30 mins
+Dim x As Integer
+
+For x = 0 To Cells(8, 4).Value
+
+Cells(x + 85, 32).Value = "Ascending"
+
+Next x
+
+
+
+'''For Cruise
+Dim y As Integer
+
+For y = (Cells(8, 4).Value + 1) To (Cells(59, 4).Value - Cells(21, 4).Value)
+
+Cells(y + 85, 32).Value = "Cruising"
+
+
+Next y
+
+
+
+'''For Descending
+
+Dim z As Integer
+
+For z = (Cells(59, 4).Value - Cells(21, 4).Value + 1) To Cells(59, 4).Value
+
+Cells(z + 85, 32).Value = "Desending"
+
+
+Next z
+
+
+End Sub
+
+
+Public Sub Thrust_Lever_Position()
+
+'For ascending 30 mins
+Dim x As Integer
+
+For x = 0 To (Cells(8, 4).Value - Range("D16"))
+
+Cells(x + 85, 33).Value = Range("D26").Value
+
+Next x
+
+
+'For ascending to cruise transition
+
+Dim t As Integer
+
+For t = (Cells(8, 4).Value - Range("D16")) + 1 To Cells(8, 4).Value
+
+Cells(t + 85, 33).Value = Cells(t - 1 + 85, 33).Value - ((Range("D26") - Range("D27")) / Range("D16"))
+
+Next t
+
+
+'''For Cruise
+Dim y As Integer
+
+For y = (Cells(8, 4).Value + 1) To (Cells(59, 4).Value - Cells(21, 4).Value)
+
+Cells(y + 85, 33).Value = Range("D27").Value
+
+'''' ???? Auto pilot thrust reduction algorithom is not applied yet
+
+Next y
+
+
+
+'''For transition Descending
+
+Dim p As Integer
+
+For p = (Cells(59, 4).Value - Cells(21, 4).Value) + 1 To (Cells(59, 4).Value - Cells(21, 4).Value) + Range("D16")
+
+Cells(p + 85, 33).Value = Cells(p + 85 - 1, 33).Value - (Range("D27") - Range("D29")) / Range("D16")
+
+
+Next p
+
+
+'''For Descending
+
+Dim z As Integer
+
+For z = (Cells(59, 4).Value - Cells(21, 4).Value) + Range("D16") + 1 To Cells(59, 4).Value
+
+Cells(z + 85, 33).Value = Range("D29").Value
+
+Next z
+
+
+End Sub
+
+Public Sub Thrust_If_Sea_Level()
+
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 34).Value = Range("D24").Value * Range("D25").Value
+
+Next x
+
+End Sub
+
+Public Sub Derated_Factor()
+
+Dim x As Integer
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 35).Value = (Cells(x + 85, 6).Value / Range("D64")) * Sqr(Range("D63") / Cells(x + 85, 7))
+'=(F85/$D$64)*SQRT($D$63/G85)
+
+Next x
+
+End Sub
+Public Sub Thrust_Available()
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 36).Value = Range("D24").Value * Range("D25").Value * Cells(x + 85, 35).Value
+
+Next x
+
+End Sub
+Public Sub Thrust_Applied()
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 37).Value = Range("D24").Value * Range("D25").Value * Cells(x + 85, 33).Value * Cells(x + 85, 35).Value
+
+Next x
+
+End Sub
+
+Public Sub Power_Generated_MW()
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 38).Value = Cells(x + 85, 37).Value * Cells(x + 85, 13).Value * 10 ^ -6
+
+Next x
+
+
+End Sub
+
+Public Sub Force_Req_X_Axis()
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 39).Value = "?"
+
+Next x
+
+End Sub
+
+Public Sub Force_Req_Z_Axis()
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 40).Value = "?"
+
+Next x
+
+End Sub
+
+Public Sub Thrust_Vector_Correction()
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 41).Value = "?"
+
+Next x
+
+End Sub
+
+Public Sub Flap_Position()
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 42).Value = "Unknown"
+
+Next x
+
+End Sub
+
+Public Sub Climb_Descend_Angle()
+
+'For ascending 30 mins
+Dim x As Integer
+
+For x = 0 To (Cells(8, 4).Value - Range("D16"))
+
+Cells(x + 85, 43).Value = Atn(Range("D10").Value * 0.3048 / Range("D9")) * 180 / 3.1416 ' rad to deg factor is 180/3.1416
+
+Next x
+
+
+'For ascending to cruise transition
+
+Dim t As Integer
+
+For t = (Cells(8, 4).Value - Range("D16")) + 1 To Cells(8, 4).Value
+
+Cells(t + 85, 43).Value = Cells(t - 1 + 85, 43).Value - ((Atn(Range("D10").Value * 0.3048 / Range("D9")) * 180 / 3.1416) / Range("D16"))
+
+Next t
+
+
+'''For Cruise
+Dim y As Integer
+
+For y = (Cells(8, 4).Value + 1) To (Cells(59, 4).Value - Cells(21, 4).Value)
+
+Cells(y + 85, 43).Value = 0
+
+
+
+Next y
+
+
+
+''For transition Descending
+
+Dim p As Integer
+
+For p = (Cells(59, 4).Value - Cells(21, 4).Value) + 1 To (Cells(59, 4).Value - Cells(21, 4).Value) + Range("D16")
+
+Cells(p + 85, 43).Value = Cells(p + 85 - 1, 43).Value + ((Atn(Range("D10").Value * 0.3048 / Range("D22")) * 180 / 3.1416) / Range("D16"))
+
+
+Next p
+
+
+''For Descending
+
+Dim z As Integer
+
+For z = (Cells(59, 4).Value - Cells(21, 4).Value) + Range("D16") + 1 To Cells(59, 4).Value
+
+
+Cells(z + 85, 43).Value = (Atn(Range("D10").Value * 0.3048 / Range("D22")) * 180 / 3.1416)
+
+Next z
+
+End Sub
+
+Public Sub Drag_D_N()
+
+'''For x = 0 To Cells(59, 4).Value
+'''
+'''Cells(x + 85, 44).Value = Cells(x + 85, 37).Value - Cells(x + 85, 30).Value * Sin(Cells(x + 85, 43).Value * 3.1416 / 180) ' deg to rad
+'''
+''''=AK85-AD85*SIN(RADIANS(AQ85))
+''''???????????? error happened here
+'''Next x
+
+
+'For ascending 30 mins
+Dim x As Integer
+
+For x = 0 To Cells(8, 4).Value
+
+Cells(x + 85, 44).Value = Cells(x + 85, 37).Value - Cells(x + 85, 30).Value * Sin(Cells(x + 85, 43).Value * 3.1416 / 180) ' deg to rad
+
+Next x
+
+
+
+'''For Cruise
+Dim y As Integer
+
+For y = (Cells(8, 4).Value + 1) To (Cells(59, 4).Value - Cells(21, 4).Value)
+
+Cells(y + 85, 44).Value = Cells(y + 85, 37).Value - Cells(y + 85, 30).Value * Sin(Cells(y + 85, 43).Value * 3.1416 / 180) ' deg to rad
+
+
+Next y
+
+
+
+'''For Descending
+
+Dim z As Integer
+
+For z = (Cells(59, 4).Value - Cells(21, 4).Value + 1) To Cells(59, 4).Value
+
+Cells(z + 85, 44).Value = Cells(z + 85, 37).Value + Cells(z + 85, 30).Value * Sin(Cells(z + 85, 43).Value * 3.1416 / 180) ' deg to rad
+
+
+Next z
+
+
+End Sub
+
+
+Public Sub Lift_L_N()
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 45).Value = Cells(x + 85, 30).Value * Cos(Cells(x + 85, 43).Value * 3.1416 / 180) ' deg to rad
+
+
+'???????????? error happened here
+
+Next x
+
+End Sub
+
+Public Sub Aerodynamic_Efficiency()
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 46).Value = Cells(x + 85, 45).Value / Cells(x + 85, 44).Value
+
+
+Next x
+
+End Sub
+Public Sub Dynamic_Pressure_Pa()
+
+For x = 0 To Cells(59, 4).Value
+
+Cells(x + 85, 47).Value = 0.5 * 1 * Cells(x + 85, 8).Value * (Cells(x + 85, 13).Value) ^ 2
+
+
+Next x
+
+End Sub
+
+Public Sub CD()
+
+For x = 0 + 1 To Cells(59, 4).Value - 1 'start fron 2nd min to avoid divided by zero at begining
+
+Cells(x + 85, 48).Value = Cells(x + 85, 44).Value / (0.5 * 1 * Cells(x + 85, 8).Value * (Cells(x + 85, 13).Value) ^ 2) / Range("D73")
+
+
+Next x
+
+End Sub
+Public Sub CL()
+
+For x = 0 + 1 To Cells(59, 4).Value - 1 'start fron 2nd min to avoid divided by zero at begining
+
+Cells(x + 85, 49).Value = Cells(x + 85, 45).Value / (0.5 * 1 * Cells(x + 85, 8).Value * (Cells(x + 85, 13).Value) ^ 2) / Range("D73")
+
+
+Next x
+
+End Sub
